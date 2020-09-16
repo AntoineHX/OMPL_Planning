@@ -1,0 +1,6 @@
+## Service 
+float32 goal_state_x
+float32 goal_state_y
+float32 goal_state_z
+---
+geometry_msgs/Pose[] poses

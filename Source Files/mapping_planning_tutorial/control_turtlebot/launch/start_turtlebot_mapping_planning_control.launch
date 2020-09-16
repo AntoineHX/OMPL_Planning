@@ -1,0 +1,35 @@
+<launch>
+	<arg name="enable_octomap" value="true"/>
+	<arg name="enable_controller" value="true"/>
+
+	<arg name="enable_plannerV2" value="true"/>
+    
+	<group if="$(arg enable_octomap)">
+    	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server" args=" " cwd="node" output="screen">
+    		<param name="frame_id"            	  value="/odom" />
+    		<!--remap from="/cloud_in" to="/pc_from_scan" /--> <!-- simulator -->
+    		<param name="resolution"            	  value="0.05" />
+    		<param name="latch"            	  value="True" />
+			<param name="sensor_model/max_range"            	  value="-1" /> <!-- -1 : unlimited -->
+			<param name="sensor_model/hit"            	  value="0.7" /> <!-- default value :0.7 -->
+			<param name="sensor_model/miss"            	  value="0.4" /> <!-- default value :0.4 -->
+
+			<param name="ground_filter/distance"            	  value="0.04" /> <!-- default value :0.04 -->
+			<param name="ground_filter/plane_distance"            	  value="0.07" /> <!-- default value :0.07 -->	
+    		<remap from="/cloud_in" to="/camera/depth/points" /> <!-- real turtlebot -->
+		</node>
+    </group>
+    
+    <node pkg="control_turtlebot" type="laserscan_to_pointcloud" name="laserscan_to_pointcloud" respawn="true" output="screen" />
+    
+    <group if="$(arg enable_controller)">
+    	<node pkg="control_turtlebot" type="controller_turtlebot.py" name="controller_turtlebot" respawn="true" output="screen" />
+    </group>
+
+	<group if="$(arg enable_plannerV2)">
+	    <!-- OMPL planner -->
+		<rosparam command="load" file="$(find control_turtlebot)/launch/config/planner_parameters.yaml" />
+		<node pkg="control_turtlebot" type="Planning_Node" name="Planning_Node" output="screen" />
+	</group>
+
+</launch>
