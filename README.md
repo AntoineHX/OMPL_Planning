@@ -1,4 +1,4 @@
-Path planning for Turtlebot and Hector_quadrotor with OMPL library.
+# Path planning for Turtlebot and Hector_quadrotor with OMPL library.
 
 Ubuntu 16.04 required
 ROS Kinetic required
